@@ -9,38 +9,168 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SignupRouteImport } from './routes/signup'
+import { Route as ProfileRouteImport } from './routes/profile'
+import { Route as PickupsRouteImport } from './routes/pickups'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as BoxesRouteImport } from './routes/boxes'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SubscribeBoxIdRouteImport } from './routes/subscribe.$boxId'
+import { Route as DonatePickupIdRouteImport } from './routes/donate.$pickupId'
 
+const SignupRoute = SignupRouteImport.update({
+  id: '/signup',
+  path: '/signup',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProfileRoute = ProfileRouteImport.update({
+  id: '/profile',
+  path: '/profile',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PickupsRoute = PickupsRouteImport.update({
+  id: '/pickups',
+  path: '/pickups',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BoxesRoute = BoxesRouteImport.update({
+  id: '/boxes',
+  path: '/boxes',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SubscribeBoxIdRoute = SubscribeBoxIdRouteImport.update({
+  id: '/subscribe/$boxId',
+  path: '/subscribe/$boxId',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DonatePickupIdRoute = DonatePickupIdRouteImport.update({
+  id: '/donate/$pickupId',
+  path: '/donate/$pickupId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/boxes': typeof BoxesRoute
+  '/login': typeof LoginRoute
+  '/pickups': typeof PickupsRoute
+  '/profile': typeof ProfileRoute
+  '/signup': typeof SignupRoute
+  '/donate/$pickupId': typeof DonatePickupIdRoute
+  '/subscribe/$boxId': typeof SubscribeBoxIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/boxes': typeof BoxesRoute
+  '/login': typeof LoginRoute
+  '/pickups': typeof PickupsRoute
+  '/profile': typeof ProfileRoute
+  '/signup': typeof SignupRoute
+  '/donate/$pickupId': typeof DonatePickupIdRoute
+  '/subscribe/$boxId': typeof SubscribeBoxIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/boxes': typeof BoxesRoute
+  '/login': typeof LoginRoute
+  '/pickups': typeof PickupsRoute
+  '/profile': typeof ProfileRoute
+  '/signup': typeof SignupRoute
+  '/donate/$pickupId': typeof DonatePickupIdRoute
+  '/subscribe/$boxId': typeof SubscribeBoxIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/boxes'
+    | '/login'
+    | '/pickups'
+    | '/profile'
+    | '/signup'
+    | '/donate/$pickupId'
+    | '/subscribe/$boxId'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/boxes'
+    | '/login'
+    | '/pickups'
+    | '/profile'
+    | '/signup'
+    | '/donate/$pickupId'
+    | '/subscribe/$boxId'
+  id:
+    | '__root__'
+    | '/'
+    | '/boxes'
+    | '/login'
+    | '/pickups'
+    | '/profile'
+    | '/signup'
+    | '/donate/$pickupId'
+    | '/subscribe/$boxId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  BoxesRoute: typeof BoxesRoute
+  LoginRoute: typeof LoginRoute
+  PickupsRoute: typeof PickupsRoute
+  ProfileRoute: typeof ProfileRoute
+  SignupRoute: typeof SignupRoute
+  DonatePickupIdRoute: typeof DonatePickupIdRoute
+  SubscribeBoxIdRoute: typeof SubscribeBoxIdRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/signup': {
+      id: '/signup'
+      path: '/signup'
+      fullPath: '/signup'
+      preLoaderRoute: typeof SignupRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/profile': {
+      id: '/profile'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof ProfileRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pickups': {
+      id: '/pickups'
+      path: '/pickups'
+      fullPath: '/pickups'
+      preLoaderRoute: typeof PickupsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/boxes': {
+      id: '/boxes'
+      path: '/boxes'
+      fullPath: '/boxes'
+      preLoaderRoute: typeof BoxesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,21 +178,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/subscribe/$boxId': {
+      id: '/subscribe/$boxId'
+      path: '/subscribe/$boxId'
+      fullPath: '/subscribe/$boxId'
+      preLoaderRoute: typeof SubscribeBoxIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/donate/$pickupId': {
+      id: '/donate/$pickupId'
+      path: '/donate/$pickupId'
+      fullPath: '/donate/$pickupId'
+      preLoaderRoute: typeof DonatePickupIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  BoxesRoute: BoxesRoute,
+  LoginRoute: LoginRoute,
+  PickupsRoute: PickupsRoute,
+  ProfileRoute: ProfileRoute,
+  SignupRoute: SignupRoute,
+  DonatePickupIdRoute: DonatePickupIdRoute,
+  SubscribeBoxIdRoute: SubscribeBoxIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { createStart } from '@tanstack/react-start'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-  }
-}
