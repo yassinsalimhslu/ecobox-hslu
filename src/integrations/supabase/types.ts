@@ -14,7 +14,275 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      box_contents: {
+        Row: {
+          box_id: string
+          id: string
+          item_name: string
+          quantity: string | null
+        }
+        Insert: {
+          box_id: string
+          id?: string
+          item_name: string
+          quantity?: string | null
+        }
+        Update: {
+          box_id?: string
+          id?: string
+          item_name?: string
+          quantity?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "box_contents_box_id_fkey"
+            columns: ["box_id"]
+            isOneToOne: false
+            referencedRelation: "boxes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      boxes: {
+        Row: {
+          description: string | null
+          farm_id: string | null
+          id: string
+          name: string
+          price_chf: number
+          size: Database["public"]["Enums"]["box_size"]
+          type: Database["public"]["Enums"]["box_type"]
+        }
+        Insert: {
+          description?: string | null
+          farm_id?: string | null
+          id?: string
+          name: string
+          price_chf: number
+          size: Database["public"]["Enums"]["box_size"]
+          type: Database["public"]["Enums"]["box_type"]
+        }
+        Update: {
+          description?: string | null
+          farm_id?: string | null
+          id?: string
+          name?: string
+          price_chf?: number
+          size?: Database["public"]["Enums"]["box_size"]
+          type?: Database["public"]["Enums"]["box_type"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "boxes_farm_id_fkey"
+            columns: ["farm_id"]
+            isOneToOne: false
+            referencedRelation: "farms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      donations: {
+        Row: {
+          created_at: string
+          id: string
+          pickup_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          pickup_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          pickup_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "donations_pickup_id_fkey"
+            columns: ["pickup_id"]
+            isOneToOne: false
+            referencedRelation: "pickups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      farms: {
+        Row: {
+          id: string
+          name: string
+          region: string | null
+        }
+        Insert: {
+          id?: string
+          name: string
+          region?: string | null
+        }
+        Update: {
+          id?: string
+          name?: string
+          region?: string | null
+        }
+        Relationships: []
+      }
+      lockers: {
+        Row: {
+          code: string
+          id: string
+          station_id: string
+        }
+        Insert: {
+          code: string
+          id?: string
+          station_id: string
+        }
+        Update: {
+          code?: string
+          id?: string
+          station_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lockers_station_id_fkey"
+            columns: ["station_id"]
+            isOneToOne: false
+            referencedRelation: "stations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      pickups: {
+        Row: {
+          created_at: string
+          id: string
+          locker_id: string | null
+          pickup_date: string
+          qr_code: string
+          status: string
+          subscription_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          locker_id?: string | null
+          pickup_date: string
+          qr_code?: string
+          status?: string
+          subscription_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          locker_id?: string | null
+          pickup_date?: string
+          qr_code?: string
+          status?: string
+          subscription_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "pickups_locker_id_fkey"
+            columns: ["locker_id"]
+            isOneToOne: false
+            referencedRelation: "lockers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "pickups_subscription_id_fkey"
+            columns: ["subscription_id"]
+            isOneToOne: false
+            referencedRelation: "subscriptions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string | null
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      stations: {
+        Row: {
+          city: string
+          id: string
+          name: string
+        }
+        Insert: {
+          city: string
+          id?: string
+          name: string
+        }
+        Update: {
+          city?: string
+          id?: string
+          name?: string
+        }
+        Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          box_id: string
+          created_at: string
+          id: string
+          station_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          box_id: string
+          created_at?: string
+          id?: string
+          station_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          box_id?: string
+          created_at?: string
+          id?: string
+          station_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_box_id_fkey"
+            columns: ["box_id"]
+            isOneToOne: false
+            referencedRelation: "boxes"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "subscriptions_station_id_fkey"
+            columns: ["station_id"]
+            isOneToOne: false
+            referencedRelation: "stations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -23,7 +291,8 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      box_size: "small" | "medium" | "large"
+      box_type: "vegan" | "veggie" | "meat"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +419,9 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      box_size: ["small", "medium", "large"],
+      box_type: ["vegan", "veggie", "meat"],
+    },
   },
 } as const
