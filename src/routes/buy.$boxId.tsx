@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { FakePaymentSheet } from "@/components/FakePaymentSheet";
 import type { Database } from "@/integrations/supabase/types";
 
 type Box = Database["public"]["Tables"]["boxes"]["Row"];
