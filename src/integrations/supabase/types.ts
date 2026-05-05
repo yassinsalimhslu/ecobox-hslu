@@ -246,6 +246,7 @@ export type Database = {
           box_id: string
           created_at: string
           id: string
+          pickup_day: number | null
           station_id: string
           status: string
           user_id: string
@@ -254,6 +255,7 @@ export type Database = {
           box_id: string
           created_at?: string
           id?: string
+          pickup_day?: number | null
           station_id: string
           status?: string
           user_id: string
@@ -262,6 +264,7 @@ export type Database = {
           box_id?: string
           created_at?: string
           id?: string
+          pickup_day?: number | null
           station_id?: string
           status?: string
           user_id?: string
