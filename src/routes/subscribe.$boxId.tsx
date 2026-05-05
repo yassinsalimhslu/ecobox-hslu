@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { FakePaymentSheet } from "@/components/FakePaymentSheet";
 import type { Database } from "@/integrations/supabase/types";
 
 type Box = Database["public"]["Tables"]["boxes"]["Row"];
@@ -40,6 +41,7 @@ function SubscribePage() {
   const [stationId, setStationId] = useState("");
   const [pickupDay, setPickupDay] = useState<number>(3); // default Wed
   const [submitting, setSubmitting] = useState(false);
+  const [showPay, setShowPay] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) nav({ to: "/login" });
