@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { Home, Package, Ticket, User, ReactNode } from "lucide-react";
+import { Home, Package, Ticket, User } from "lucide-react";
 import type { ReactNode as RN } from "react";
 import { useAuth } from "@/lib/auth";
 
