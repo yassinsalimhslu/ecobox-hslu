@@ -163,10 +163,10 @@ function SubscribePage() {
       <Button
         size="lg"
         className="w-full rounded-full mt-8"
-        onClick={subscribe}
+        onClick={() => setShowPay(true)}
         disabled={submitting || !stationId}
       >
-        {submitting ? "Subscribing…" : "Confirm subscription"}
+        {submitting ? "Subscribing…" : `Pay & subscribe · CHF ${box.price_chf}/wk`}
       </Button>
       <Button
         variant="outline"
@@ -176,6 +176,18 @@ function SubscribePage() {
       >
         Just buy one box (no subscription)
       </Button>
+
+      {showPay && (
+        <FakePaymentSheet
+          amountChf={Number(box.price_chf)}
+          label={`Subscribe to ${box.name}`}
+          onCancel={() => setShowPay(false)}
+          onPaid={async () => {
+            setShowPay(false);
+            await subscribe();
+          }}
+        />
+      )}
     </main>
   );
 }
