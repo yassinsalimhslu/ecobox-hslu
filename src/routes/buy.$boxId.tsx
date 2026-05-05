@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { FakePaymentSheet } from "@/components/FakePaymentSheet";
 import type { Database } from "@/integrations/supabase/types";
 
 type Box = Database["public"]["Tables"]["boxes"]["Row"];
@@ -28,6 +29,7 @@ function BuyOncePage() {
   const [stationId, setStationId] = useState("");
   const [pickupDate, setPickupDate] = useState<string>(todayPlus(2));
   const [busy, setBusy] = useState(false);
+  const [showPay, setShowPay] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) nav({ to: "/login" });
@@ -137,11 +139,23 @@ function BuyOncePage() {
       <Button
         size="lg"
         className="w-full rounded-full mt-8"
-        onClick={buy}
+        onClick={() => setShowPay(true)}
         disabled={busy || !stationId || !pickupDate}
       >
-        {busy ? "Reserving…" : `Buy this box · CHF ${box.price_chf}`}
+        {busy ? "Reserving…" : `Pay & buy · CHF ${box.price_chf}`}
       </Button>
+
+      {showPay && (
+        <FakePaymentSheet
+          amountChf={Number(box.price_chf)}
+          label={`Buy ${box.name}`}
+          onCancel={() => setShowPay(false)}
+          onPaid={async () => {
+            setShowPay(false);
+            await buy();
+          }}
+        />
+      )}
     </main>
   );
 }
