@@ -17,6 +17,7 @@ import { Route as BoxesRouteImport } from './routes/boxes'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SubscribeBoxIdRouteImport } from './routes/subscribe.$boxId'
 import { Route as DonatePickupIdRouteImport } from './routes/donate.$pickupId'
+import { Route as BuyBoxIdRouteImport } from './routes/buy.$boxId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -58,6 +59,11 @@ const DonatePickupIdRoute = DonatePickupIdRouteImport.update({
   path: '/donate/$pickupId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BuyBoxIdRoute = BuyBoxIdRouteImport.update({
+  id: '/buy/$boxId',
+  path: '/buy/$boxId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -66,6 +72,7 @@ export interface FileRoutesByFullPath {
   '/pickups': typeof PickupsRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/buy/$boxId': typeof BuyBoxIdRoute
   '/donate/$pickupId': typeof DonatePickupIdRoute
   '/subscribe/$boxId': typeof SubscribeBoxIdRoute
 }
@@ -76,6 +83,7 @@ export interface FileRoutesByTo {
   '/pickups': typeof PickupsRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/buy/$boxId': typeof BuyBoxIdRoute
   '/donate/$pickupId': typeof DonatePickupIdRoute
   '/subscribe/$boxId': typeof SubscribeBoxIdRoute
 }
@@ -87,6 +95,7 @@ export interface FileRoutesById {
   '/pickups': typeof PickupsRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/buy/$boxId': typeof BuyBoxIdRoute
   '/donate/$pickupId': typeof DonatePickupIdRoute
   '/subscribe/$boxId': typeof SubscribeBoxIdRoute
 }
@@ -99,6 +108,7 @@ export interface FileRouteTypes {
     | '/pickups'
     | '/profile'
     | '/signup'
+    | '/buy/$boxId'
     | '/donate/$pickupId'
     | '/subscribe/$boxId'
   fileRoutesByTo: FileRoutesByTo
@@ -109,6 +119,7 @@ export interface FileRouteTypes {
     | '/pickups'
     | '/profile'
     | '/signup'
+    | '/buy/$boxId'
     | '/donate/$pickupId'
     | '/subscribe/$boxId'
   id:
@@ -119,6 +130,7 @@ export interface FileRouteTypes {
     | '/pickups'
     | '/profile'
     | '/signup'
+    | '/buy/$boxId'
     | '/donate/$pickupId'
     | '/subscribe/$boxId'
   fileRoutesById: FileRoutesById
@@ -130,6 +142,7 @@ export interface RootRouteChildren {
   PickupsRoute: typeof PickupsRoute
   ProfileRoute: typeof ProfileRoute
   SignupRoute: typeof SignupRoute
+  BuyBoxIdRoute: typeof BuyBoxIdRoute
   DonatePickupIdRoute: typeof DonatePickupIdRoute
   SubscribeBoxIdRoute: typeof SubscribeBoxIdRoute
 }
@@ -192,6 +205,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DonatePickupIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/buy/$boxId': {
+      id: '/buy/$boxId'
+      path: '/buy/$boxId'
+      fullPath: '/buy/$boxId'
+      preLoaderRoute: typeof BuyBoxIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -202,6 +222,7 @@ const rootRouteChildren: RootRouteChildren = {
   PickupsRoute: PickupsRoute,
   ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
+  BuyBoxIdRoute: BuyBoxIdRoute,
   DonatePickupIdRoute: DonatePickupIdRoute,
   SubscribeBoxIdRoute: SubscribeBoxIdRoute,
 }
