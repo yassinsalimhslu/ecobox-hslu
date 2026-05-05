@@ -9,37 +9,25 @@ import type { Database } from "@/integrations/supabase/types";
 type Box = Database["public"]["Tables"]["boxes"]["Row"];
 type Station = Database["public"]["Tables"]["stations"]["Row"];
 
-export const Route = createFileRoute("/subscribe/$boxId")({
-  component: SubscribePage,
+export const Route = createFileRoute("/buy/$boxId")({
+  component: BuyOncePage,
 });
 
-const DAYS = [
-  { v: 1, label: "Mon" },
-  { v: 2, label: "Tue" },
-  { v: 3, label: "Wed" },
-  { v: 4, label: "Thu" },
-  { v: 5, label: "Fri" },
-  { v: 6, label: "Sat" },
-  { v: 0, label: "Sun" },
-];
-
-// Date of the next occurrence of weekday `dow` (0=Sun..6=Sat), strictly after today.
-function nextDateForDow(from: Date, dow: number): Date {
-  const d = new Date(from);
-  const diff = (dow - d.getDay() + 7) % 7 || 7;
-  d.setDate(d.getDate() + diff);
-  return d;
+function todayPlus(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().slice(0, 10);
 }
 
-function SubscribePage() {
+function BuyOncePage() {
   const { boxId } = Route.useParams();
   const { user, loading } = useAuth();
   const nav = useNavigate();
   const [box, setBox] = useState<Box | null>(null);
   const [stations, setStations] = useState<Station[]>([]);
   const [stationId, setStationId] = useState("");
-  const [pickupDay, setPickupDay] = useState<number>(3); // default Wed
-  const [submitting, setSubmitting] = useState(false);
+  const [pickupDate, setPickupDate] = useState<string>(todayPlus(2));
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     if (!loading && !user) nav({ to: "/login" });
@@ -57,22 +45,23 @@ function SubscribePage() {
     })();
   }, [boxId]);
 
-  async function subscribe() {
+  async function buy() {
     if (!user || !box || !stationId) return;
-    setSubmitting(true);
+    setBusy(true);
+    // One-off purchase = a subscription with status 'one_off' + a single pickup
     const { data: sub, error } = await supabase
       .from("subscriptions")
       .insert({
         user_id: user.id,
         box_id: box.id,
         station_id: stationId,
-        pickup_day: pickupDay,
+        status: "one_off",
       })
       .select()
       .single();
     if (error || !sub) {
-      setSubmitting(false);
-      return toast.error(error?.message ?? "Could not subscribe");
+      setBusy(false);
+      return toast.error(error?.message ?? "Could not place order");
     }
     const { data: locker } = await supabase
       .from("lockers")
@@ -80,56 +69,43 @@ function SubscribePage() {
       .eq("station_id", stationId)
       .limit(1)
       .maybeSingle();
-
-    // 4 weekly pickups on the chosen weekday
-    const today = new Date();
-    const first = nextDateForDow(today, pickupDay);
-    const rows = Array.from({ length: 4 }).map((_, i) => {
-      const d = new Date(first);
-      d.setDate(d.getDate() + 7 * i);
-      return {
-        subscription_id: sub.id,
-        user_id: user.id,
-        locker_id: locker?.id ?? null,
-        pickup_date: d.toISOString().slice(0, 10),
-      };
+    const { error: pErr } = await supabase.from("pickups").insert({
+      subscription_id: sub.id,
+      user_id: user.id,
+      locker_id: locker?.id ?? null,
+      pickup_date: pickupDate,
     });
-    await supabase.from("pickups").insert(rows);
-
-    toast.success("Subscribed! Your pickups are scheduled.");
+    setBusy(false);
+    if (pErr) return toast.error(pErr.message);
+    toast.success("Box reserved! See it in My pickups.");
     nav({ to: "/pickups" });
   }
 
   if (!box) return <main className="px-6 pt-12 text-muted-foreground">Loading…</main>;
 
+  const minDate = todayPlus(1);
+  const maxDate = todayPlus(14);
+
   return (
     <main className="px-6 pt-12">
-      <p className="text-xs uppercase tracking-wider text-primary">Confirm subscription</p>
+      <p className="text-xs uppercase tracking-wider text-primary">One-off purchase</p>
       <h1 className="mt-2 font-serif text-3xl">{box.name}</h1>
-      <p className="mt-1 text-muted-foreground">CHF {box.price_chf} · weekly</p>
+      <p className="mt-1 text-muted-foreground">CHF {box.price_chf} · single box</p>
       {box.description && <p className="mt-4 text-sm">{box.description}</p>}
 
       <div className="mt-8">
-        <label className="text-sm font-medium block mb-2">Pickup day</label>
-        <div className="grid grid-cols-7 gap-1.5">
-          {DAYS.map((d) => (
-            <button
-              type="button"
-              key={d.v}
-              onClick={() => setPickupDay(d.v)}
-              className={`rounded-lg py-2 text-xs font-medium border transition-colors ${
-                pickupDay === d.v
-                  ? "border-primary bg-primary text-primary-foreground"
-                  : "border-border bg-background"
-              }`}
-            >
-              {d.label}
-            </button>
-          ))}
-        </div>
-        <p className="text-xs text-muted-foreground mt-2">
-          Your box arrives every {DAYS.find((x) => x.v === pickupDay)?.label}.
-        </p>
+        <label htmlFor="pickup-date" className="text-sm font-medium block mb-2">
+          Pickup date
+        </label>
+        <input
+          id="pickup-date"
+          type="date"
+          value={pickupDate}
+          min={minDate}
+          max={maxDate}
+          onChange={(e) => setPickupDate(e.target.value)}
+          className="w-full rounded-xl border border-border bg-background p-3 text-base"
+        />
       </div>
 
       <div className="mt-8">
@@ -161,18 +137,10 @@ function SubscribePage() {
       <Button
         size="lg"
         className="w-full rounded-full mt-8"
-        onClick={subscribe}
-        disabled={submitting || !stationId}
+        onClick={buy}
+        disabled={busy || !stationId || !pickupDate}
       >
-        {submitting ? "Subscribing…" : "Confirm subscription"}
-      </Button>
-      <Button
-        variant="outline"
-        size="lg"
-        className="w-full rounded-full mt-2"
-        onClick={() => nav({ to: "/buy/$boxId", params: { boxId: box.id } })}
-      >
-        Just buy one box (no subscription)
+        {busy ? "Reserving…" : `Buy this box · CHF ${box.price_chf}`}
       </Button>
     </main>
   );
